@@ -3,7 +3,7 @@ name: Build app
 on: [push, workflow_dispatch]
 
 jobs:
-  build-1:
+  build-web:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,12 +28,11 @@ jobs:
     - name: Build with Flet
       run: |
         flet build web
-        flet pack -y main.py
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: package
+        name: web-package
         path: |
           build/
           dist/
@@ -42,9 +41,9 @@ jobs:
           include/
           src/
         if-no-files-found: error
-
-  build-2:
-    runs-on: windows-latest
+        
+build-linux:
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
@@ -57,7 +56,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
+        python -m pip install --upgrade pip wheel setuptools pyinstaller
         pip install -r requirements.txt
   
     - name: Set up Flutter
@@ -72,12 +71,43 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: package
+        name: linux-package
         path: |
-          build/
           dist/
           bin/
-          lib/
-          include/
-          src/
+        if-no-files-found: error
+
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python 3.11.6
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11.6
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip wheel setuptools pyinstaller
+        pip install -r requirements.txt
+  
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.0'
+
+    - name: Build with Flet
+      run: |
+        flet pack -y main.py
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: windows-package
+        path: |
+          dist/
+          bin/
         if-no-files-found: error
