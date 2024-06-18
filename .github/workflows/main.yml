@@ -41,8 +41,8 @@ jobs:
           include/
           src/
         if-no-files-found: error
-        
-build-linux:
+
+  build-linux:
     runs-on: ubuntu-latest
 
     steps:
