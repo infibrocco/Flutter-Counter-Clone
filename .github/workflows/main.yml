@@ -1,4 +1,4 @@
-name: Web Build
+name: Build app
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
@@ -32,6 +32,7 @@ jobs:
     - name: Build with Flet
       run: |
         flet build web
+        flet build linux
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
